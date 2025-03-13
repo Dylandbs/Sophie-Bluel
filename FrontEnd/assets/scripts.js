@@ -1,6 +1,6 @@
 
 const form = document.querySelector("form");
-
+const loginEl = document.querySelector("#login");
 
 // Fonction pour lire le cookie
 const getCookie = (name) => {
@@ -47,6 +47,26 @@ const logIn = () => {
   }
 };
 
+const logOut = () => {
+  if (!loginEl) {
+    throw new Error("Erreur le login n'existe pas");
+  }
+
+  if (getCookie("token")) {
+    loginEl.textContent = "logout";
+    loginEl.addEventListener("click", () => {
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      alert("Vous êtes déconnectée");
+      window.location.reload();
+    });
+  } else {
+    loginEl.textContent = "login";
+    loginEl.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+  }
+};
+
 
 logIn();
-
+logOut();
