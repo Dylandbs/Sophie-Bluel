@@ -1,6 +1,8 @@
-
+const body = document.querySelector("body");
 const form = document.querySelector("form");
 const loginEl = document.querySelector("#login");
+const mesProjets = document.querySelector("#title-portfolio");
+const sectionPortfolio = document.querySelector("#portfolio");
 
 // Fonction pour lire le cookie
 const getCookie = (name) => {
@@ -9,9 +11,43 @@ const getCookie = (name) => {
   if (parts.length === 2) return parts.pop().split(";").shift();
 };
 
-const token = getCookie("token"); 
+const cookie = getCookie("token");
 
+const elementUpdate = () => {
+  if (mesProjets && !cookie) {
+    const navFilterImg = document.createElement("nav");
+    navFilterImg.classList.add("filter-gallery");
+    navFilterImg.innerHTML = `
+      <p id="all">Tous</p>
+      <p id="objets">Objets</p>
+      <p id="appartements">Appartements</p>
+      <p id="restaurants">Hotels & restaurants</p>
+    `;
 
+    mesProjets.insertAdjacentElement("afterend", navFilterImg);
+  } else if (body && cookie) {
+    const editionMode = document.createElement("div");
+    editionMode.classList.add("edition-mode");
+    editionMode.innerHTML = `
+    <i class="fa-regular fa-pen-to-square"></i>
+      <p>Mode-edition</p>`;
+
+    body.prepend(editionMode);
+
+    const titleH2Portfolio = document.querySelector("#title-portfolio");
+    titleH2Portfolio?.remove();
+    const headerPortfolio = document.createElement("div");
+    headerPortfolio.classList.add("header-portfolio");
+    headerPortfolio.innerHTML = `
+          <h2 id="title-portfolio">Mes Projets</h2>
+           <div class="modify">
+            <i class="fa-regular fa-pen-to-square"></i>
+            <p>Modifier</p>
+          </div>
+        `;
+    sectionPortfolio?.prepend(headerPortfolio);
+  }
+};
 
 const logIn = () => {
   if (form) {
@@ -35,7 +71,15 @@ const logIn = () => {
           document.cookie = `token=${log.token}; path=/; max-age=3600`; // expire dans 1 heure
           window.location.href = "index.html";
         } else {
-          alert("Erreur dans l'identifiant ou le mot de passe");
+          const existingError = document.querySelector(".error-log");
+          if (!existingError) {
+            const email = document.querySelector("#email");
+            const errorLog = document.createElement("p");
+            errorLog.classList.add("error-log");
+            errorLog.textContent =
+              "Erreur dans l'identifiant ou le mot de passe";
+            email?.insertAdjacentElement("afterend", errorLog);
+          }
         }
       } catch (error) {
         alert("Erreur de connexion au serveur");
@@ -67,6 +111,6 @@ const logOut = () => {
   }
 };
 
-
+elementUpdate();
 logIn();
 logOut();
