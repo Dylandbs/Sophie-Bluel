@@ -111,6 +111,81 @@ const logOut = () => {
   }
 };
 
+const filterData = async () => {
+  const allBtn = document.querySelector("#all");
+  const objetsBtn = document.querySelector("#objets");
+  const appartementsBtn = document.querySelector("#appartements");
+  const restaurantsBtn = document.querySelector("#restaurants");
+  const allFigures = document.querySelectorAll(".gallery figure");
+
+  try {
+    const res = await fetch("http://localhost:5678/api/categories");
+    const categorie = await res.json();
+    localStorage.setItem("filterImg", JSON.stringify(categorie));
+
+    const recupArray = (key) => {
+      const arrayFilter = localStorage.getItem(key);
+      if (arrayFilter) {
+        return JSON.parse(arrayFilter);
+      } else {
+        return null;
+      }
+    };
+
+    const categorieFilter = recupArray("filterImg");
+
+    allFigures.forEach((element) => {
+      if (allBtn)
+        allBtn.addEventListener("click", () => {
+          element.style.display = "block";
+        });
+    });
+
+    categorieFilter.forEach((element) => {
+      if (element.name === "Objets") {
+        objetsBtn?.addEventListener("click", () => {
+          allFigures.forEach((figure) => {
+            const figureId = figure.getAttribute("data-category-id");
+
+            if (figureId === element.id.toString()) {
+              figure.style.display = "block";
+            } else {
+              figure.style.display = "none";
+            }
+          });
+        });
+      } else if (element.name === "Appartements") {
+        appartementsBtn?.addEventListener("click", () => {
+          allFigures.forEach((figure) => {
+            const figureId = figure.getAttribute("data-category-id");
+
+            if (figureId === element.id.toString()) {
+              figure.style.display = "block";
+            } else {
+              figure.style.display = "none";
+            }
+          });
+        });
+      } else if (element.name === "Hotels & restaurants") {
+        restaurantsBtn?.addEventListener("click", () => {
+          allFigures.forEach((figure) => {
+            const figureId = figure.getAttribute("data-category-id");
+
+            if (figureId === element.id.toString()) {
+              figure.style.display = "block";
+            } else {
+              figure.style.display = "none";
+            }
+          });
+        });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 elementUpdate();
 logIn();
 logOut();
+filterData();
