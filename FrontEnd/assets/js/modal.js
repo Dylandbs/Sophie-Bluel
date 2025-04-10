@@ -1,6 +1,5 @@
 import { getCookie } from "./auth.js";
-import { recupArray, updateGallery } from "./gallery.js";
-
+import { recupArray, updateGallery, deleteIcons } from "./gallery.js";
 
 const urlApi = "http://localhost:5678/api/works";
 let modalInitial = false;
@@ -15,7 +14,6 @@ let formDataCache = {
 
 const closeModal = () => {
   const modale = document.getElementById("modale");
-  const containerModale = document.getElementById("modale-container");
 
   if (modale) {
     modale.style.display = "none";
@@ -26,18 +24,10 @@ const closeModal = () => {
       imageFile: null,
       imageUrl: null,
     };
-
-    if (containerModale && originalContent) {
-      containerModale.innerHTML = originalContent;
-      document.getElementById("addImg")?.addEventListener("click", (e) => {
-        e.preventDefault();
-        updateModalContent(2);
-      });
-    }
   }
 };
 
-const openModale = () => {
+const openModale = async () => {
   const modale = document.getElementById("modale");
   modale.style.display = "flex";
 
@@ -53,6 +43,11 @@ const openModale = () => {
     currentPage = 1;
   }
 
+  const galleryModale = document.querySelector(".gallery-modale");
+  if (galleryModale) {
+    await updateGallery(galleryModale, false);
+    deleteIcons();
+  }
   setupNavigation();
 };
 
@@ -63,9 +58,17 @@ const setupNavigation = () => {
   });
 
   document.getElementById("return")?.addEventListener("click", handleReturn);
+
   document
     .getElementById("close-modale")
     ?.addEventListener("click", closeModal);
+
+  const modale = document.getElementById("modale");
+  modale?.addEventListener("click", (e) => {
+    if (e.target === modale) {
+      closeModal();
+    }
+  });
 };
 
 const handleReturn = () => {
@@ -81,6 +84,13 @@ const updateModalContent = (page) => {
     case 1:
       containerModale.innerHTML = originalContent;
       setupNavigation();
+
+      const galleryModale = document.querySelector(".gallery-modale");
+      if (galleryModale) {
+        updateGallery(galleryModale, false).then(() => {
+          deleteIcons();
+        });
+      }
       break;
 
     case 2:
@@ -103,6 +113,7 @@ const updateModalContent = (page) => {
           <label for="categorie" class="name-input">Catégorie</label>
           <select name="categorie" id="categorie-filter-img">
             <option value=""></option>
+            ${generateCategoryOptions()}
           </select>
           <div class="line"></div>
         </div>
@@ -158,7 +169,6 @@ const updateModalContent = (page) => {
 };
 
 const generateCategoryOptions = () => {
- 
   const categorieFilter = recupArray("filterImg");
   let optionsHTML = "";
 
@@ -209,7 +219,6 @@ const setupPreview = () => {
     });
   }
 
-
   document.getElementById("titre")?.addEventListener("input", (e) => {
     formDataCache.title = e.target.value;
   });
@@ -221,17 +230,16 @@ const setupPreview = () => {
     });
 };
 
-
 const submitProject = () => {
   const btnValidate = document.getElementById("submit-img");
   btnValidate?.addEventListener("click", async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
     formData.append("image", formDataCache.imageFile);
     formData.append("title", formDataCache.title);
     formData.append("category", formDataCache.category);
-    
+
     try {
       const res = await fetch(urlApi, {
         method: "POST",
@@ -241,17 +249,31 @@ const submitProject = () => {
         },
         body: formData,
       });
-      
-      const data = await res.json();
-      
-      if (res.ok) {
-        alert("Projet ajouté avec succès !");
-        updateModalContent(2);
-        const gallery = document.querySelector(".gallery");
-        const galleryModale = document.querySelector('.gallery-modale')
 
-        await updateGallery(gallery, true);
-        await updateGallery(galleryModale, false);
+      const data = await res.json();
+
+      if (res.ok) {
+        const gallery = document.querySelector(".gallery");
+        if (gallery) {
+          await updateGallery(gallery, true);
+        }
+
+        formDataCache = {
+          title: "",
+          category: "",
+          imageFile: null,
+          imageUrl: null,
+        };
+
+        alert("Projet ajouté avec succès !");
+
+        updateModalContent(2);
+
+        const galleryModale = document.querySelector(".gallery-modale");
+        if (galleryModale) {
+          await updateGallery(galleryModale, false);
+          deleteIcons();
+        }
       } else {
         throw new Error("Erreur lors de l'envoi");
       }

@@ -2,8 +2,6 @@ import { getCookie } from "./auth.js";
 
 const urlApi = "http://localhost:5678/api/works";
 
-
-
 const updateGallery = async (targetGallery, shouldAddTitle) => {
   try {
     const res = await fetch(urlApi);
@@ -68,12 +66,10 @@ const deleteIcons = () => {
           if (res.ok) {
             parentFigure.remove();
             console.log("Figure supprimée avec succès");
-
-            const gallery = document.querySelector(".gallery");
-        const galleryModale = document.querySelector('.gallery-modale')
-
-        await updateGallery(gallery, true);
-        await updateGallery(galleryModale, false);
+            const mainGallery = document.querySelector(".gallery");
+            if (mainGallery) {
+              updateGallery(mainGallery, true);
+            }
           } else {
             console.error(
               "Erreur lors de la suppression de la figure",
@@ -157,6 +153,5 @@ const filterData = async () => {
     console.error(error);
   }
 };
-
 
 export { filterData, deleteIcons, updateGallery, recupArray };
