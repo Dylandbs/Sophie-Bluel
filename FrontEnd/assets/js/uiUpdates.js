@@ -1,11 +1,26 @@
-import { getCookie } from './auth.js';
-import { updateGallery } from "./gallery.js";
+import { getCookie } from "./auth.js";
+import { updateGallery, filterData, deleteIcons } from "./gallery.js";
 
 const elementUpdate = () => {
   const body = document.querySelector("body");
   const mesProjets = document.getElementById("title-portfolio");
   const sectionPortfolio = document.getElementById("portfolio");
   const cookie = getCookie("token");
+
+  if (cookie) {
+
+    const galleryModale = document.querySelector(".gallery-modale");
+    if (galleryModale) {
+      updateGallery(galleryModale, false).then(() => {
+        deleteIcons();
+      });
+    }
+
+    const mainGallery = document.querySelector(".gallery");
+    if (mainGallery) {
+      updateGallery(mainGallery, true);
+    }
+  }
 
   if (mesProjets && !cookie) {
     const navFilterImg = document.createElement("nav");
@@ -17,6 +32,8 @@ const elementUpdate = () => {
       <p id="restaurants">Hotels & restaurants</p>
     `;
     mesProjets.insertAdjacentElement("afterend", navFilterImg);
+    
+    filterData();
   } else if (body && cookie) {
     const editionMode = document.createElement("div");
     editionMode.classList.add("edition-mode");
@@ -40,7 +57,5 @@ const elementUpdate = () => {
     sectionPortfolio?.prepend(headerPortfolio);
   }
 };
-
-
 
 export { elementUpdate };

@@ -11,7 +11,7 @@ const updateGallery = async (targetGallery, shouldAddTitle) => {
     const categories = await res.json();
     console.log(categories);
 
-    targetGallery.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     categories.forEach((categorie) => {
       const figure = document.createElement("figure");
@@ -35,8 +35,13 @@ const updateGallery = async (targetGallery, shouldAddTitle) => {
         figure.appendChild(trashIcon);
       }
 
-      targetGallery.appendChild(figure);
+      fragment.appendChild(figure);
     });
+
+    if (getCookie("token")) {
+      targetGallery.innerHTML = '';
+      targetGallery.appendChild(fragment);
+    }
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
   }
@@ -98,17 +103,17 @@ const filterData = async () => {
 
   try {
     const res = await fetch("http://localhost:5678/api/categories");
-    const categorie = await res.json();
-    localStorage.setItem("filterImg", JSON.stringify(categorie));
+    const categories = await res.json();
+    localStorage.setItem("filterImg", JSON.stringify(categories));
 
     const categorieFilter = recupArray("filterImg");
-
-
 
     allFigures.forEach((element) => {
       if (allBtn)
         allBtn.addEventListener("click", () => {
-          element.style.display = "block";
+          if (element instanceof HTMLElement) {
+            element.style.display = "block";
+          }
         });
     });
 
@@ -118,9 +123,13 @@ const filterData = async () => {
           allFigures.forEach((figure) => {
             const figureId = figure.getAttribute("data-category-id");
             if (figureId === element.id.toString()) {
-              figure.style.display = "block";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "block";
+              }
             } else {
-              figure.style.display = "none";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "none";
+              } 
             }
           });
         });
@@ -129,9 +138,13 @@ const filterData = async () => {
           allFigures.forEach((figure) => {
             const figureId = figure.getAttribute("data-category-id");
             if (figureId === element.id.toString()) {
-              figure.style.display = "block";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "block";
+              }
             } else {
-              figure.style.display = "none";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "none";
+              }
             }
           });
         });
@@ -141,9 +154,13 @@ const filterData = async () => {
             const figureId = figure.getAttribute("data-category-id");
 
             if (figureId === element.id.toString()) {
-              figure.style.display = "block";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "block";
+              }
             } else {
-              figure.style.display = "none";
+              if (figure instanceof HTMLElement) {
+                figure.style.display = "none";
+              }
             }
           });
         });

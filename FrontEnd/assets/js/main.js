@@ -19,7 +19,6 @@ const initApp = async () => {
   } else {
     console.error("Erreur : l'élément .gallery n'existe pas dans le DOM");
   }
-
   initModal();
 };
 

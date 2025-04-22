@@ -1,4 +1,3 @@
-import { updateGallery } from "./gallery.js";
 
 const getCookie = (name) => {
   const allCookies = `; ${document.cookie}`;
@@ -6,6 +5,9 @@ const getCookie = (name) => {
 
   if (parts.length === 2) {
     const afterEqualSign = parts.pop();
+    if (!afterEqualSign) {
+      throw new Error("Le cookie a été trouvé mais son contenu est vide");
+    }
     const allPartsAfterSplit = afterEqualSign.split(";");
     const cookieValue = allPartsAfterSplit.shift();
     return cookieValue;

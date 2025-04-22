@@ -4,31 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/style.css" />
-    <title>Document</title>
+    <title>Login</title>
   </head>
   <body>
-    <header>
-      <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
-      <nav>
-        <ul>
-          <li>projets</li>
-          <li>contact</li>
-          <li id="login">login</li>
-          <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
-        </ul>
-      </nav>
-    </header>
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Vous avez un projet ? Discutons-en !</p>
-      <form action="#">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" />
-        <label for="name">Password</label>
-        <input type="text" name="password" id="password" />
-        <input type="submit" value="Se connecter" id="Validation" />
-      </form>
-    </section>
+    <div class="page-login">
+      <header>
+        <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+        <nav>
+          <ul>
+            <li>projets</li>
+            <li>contact</li>
+            <li id="login">login</li>
+            <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <section id="contact">
+          <h2>Contact</h2>
+          <p>Vous avez un projet ? Discutons-en !</p>
+          <form action="#">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" />
+            <input type="submit" value="Se connecter" id="Validation" />
+          </form>
+          <div>
+            <span id="mdp">Mot de passe oublié</span>
+          </div>
+        </section>
+      </main>
+    </div>
     <footer>
       <nav>
         <ul>

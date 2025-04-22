@@ -24,21 +24,35 @@ const closeModal = () => {
       imageFile: null,
       imageUrl: null,
     };
+
+    const containerModale = document.getElementById("modale-container");
+    if (containerModale && originalContent) {
+      containerModale.innerHTML = originalContent;
+    }
   }
 };
 
 const openModale = async () => {
   const modale = document.getElementById("modale");
+  if (!modale) {
+    throw new Error("La modale n'existe pas");
+  }
   modale.style.display = "flex";
 
   if (!modalInitial) {
     const containerModale = document.getElementById("modale-container");
+    if (!containerModale) {
+      throw new Error("Le container de la modale n'existe pas");
+    }
     originalContent = containerModale.innerHTML;
     modalInitial = true;
   }
 
   if (currentPage !== 1) {
     const containerModale = document.getElementById("modale-container");
+    if (!containerModale) {
+      throw new Error("Le container de la modale n'existe pas");
+    }
     containerModale.innerHTML = originalContent;
     currentPage = 1;
   }
@@ -82,6 +96,9 @@ const updateModalContent = (page) => {
 
   switch (page) {
     case 1:
+      if (!containerModale) {
+        throw new Error("Le container de la modale n'existe pas");
+      }
       containerModale.innerHTML = originalContent;
       setupNavigation();
 
@@ -94,49 +111,59 @@ const updateModalContent = (page) => {
       break;
 
     case 2:
+      if (!containerModale) {
+        throw new Error("Le container de la modale n'existe pas");
+      }
       containerModale.innerHTML = `
-        <i class="fa-solid fa-arrow-left btn-return" id="return"></i>
-        <i class="fa-solid fa-xmark btn-container" id="close-modale"></i>
-        <h3>Ajout photo</h3>
-        <div class="img-add">
-          <img src="./assets/images/picture-svgrepo-com 1.png" alt="" id="placeholder-image" />
-          <label class="custom-file-button">
-            + Ajouter photo
-            <input type="file" class="hidden-file-input" id="file-input">
-          </label>
-          <p>jpg, png : 4mo max</p>
-          <div id="file-error" style="color: red; margin-top: 5px;"></div>
-        </div>
-        <div class="info-img">
-          <label for="titre" class="name-input">Titre</label>
-          <input type="text" name="titre" id="titre" value="" />
-          <label for="categorie" class="name-input">Catégorie</label>
-          <select name="categorie" id="categorie-filter-img">
-            <option value=""></option>
-            ${generateCategoryOptions()}
-          </select>
-          <div class="line"></div>
-        </div>
-        <button class="btn-add-img" id="submit-img" disabled>
-          Valider
-        </button>
+    <i class="fa-solid fa-arrow-left btn-return" id="return"></i>
+    <i class="fa-solid fa-xmark btn-container" id="close-modale"></i>
+    <h3>Ajout photo</h3>
+    <form action="#">
+      <div class="img-add">
+        <img
+          src="./assets/images/picture-svgrepo-com 1.png"
+          alt=""
+          id="placeholder-image"
+        />
+        <label class="custom-file-button">
+          + Ajouter photo
+          <input type="file" class="hidden-file-input" id="file-input" />
+        </label>
+        <p>jpg, png : 4mo max</p>
+        <div id="file-error"></div>
+      </div>
+      <div class="info-img">
+        <label for="titre" class="name-input">Titre</label>
+        <input type="text" name="titre" id="titre" value="" />
+        <label for="categorie" class="name-input">Catégorie</label>
+        <select name="categorie" id="categorie-filter-img">
+          <option value=""></option>
+        </select>
+        <div class="line"></div>
+      </div>
+      <button class="btn-add-img" id="submit-img" disabled>Valider</button>
+    </form>
       `;
 
-      document.getElementById("categorie-filter-img").value =
-        formDataCache.category;
       const btnAddImg = document.querySelector(".btn-add-img");
       if (btnAddImg) {
-        btnAddImg.style.backgroundColor = "#a7a7a7";
+        if (btnAddImg instanceof HTMLElement) {
+          btnAddImg.style.backgroundColor = "#a7a7a7";
+        }
       }
       setupPreview();
       setupNavigation();
       break;
 
     case 3:
+      if (!containerModale) {
+        throw new Error("Le container de la modale n'existe pas");
+      }
       containerModale.innerHTML = `
-        <i class="fa-solid fa-arrow-left btn-return" id="return"></i>
-        <i class="fa-solid fa-xmark btn-container" id="close-modale"></i>
-        <h3>Ajout photo</h3>
+      <i class="fa-solid fa-arrow-left btn-return" id="return"></i>
+      <i class="fa-solid fa-xmark btn-container" id="close-modale"></i>
+      <h3>Ajout photo</h3>
+      <form action="#">
         <div class="img-add">
           <div class="image-preview-container">
             <img src="${
@@ -149,15 +176,16 @@ const updateModalContent = (page) => {
           <input type="text" name="titre" id="titre" value="${
             formDataCache.title
           }" />
+          <div id="file-error"></div>
           <label for="categorie" class="name-input">Catégorie</label>
           <select name="categorie" id="categorie-filter-img">
             ${generateCategoryOptions()}
           </select>
           <div class="line"></div>
         </div>
-        <button class="btn-add-img" id="submit-img"}>
-          Valider
-        </button>
+        <input type="submit" class="btn-add-img" id="submit-img" value="Valider">
+        </input>
+      </form>
       `;
       document.getElementById("categorie-filter-img").value =
         formDataCache.category;
@@ -186,7 +214,14 @@ const setupPreview = () => {
 
   if (fileInput) {
     fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
+      const target = e.target;
+
+      if (!(target instanceof HTMLInputElement)) return;
+      if (!target.files) return;
+      const file = target.files[0];
+      if (!errorDiv) {
+        throw new Error("L'élément du méssage d'erreur n'existe pas");
+      }
       errorDiv.textContent = "";
 
       if (!file) return;
@@ -199,16 +234,25 @@ const setupPreview = () => {
         !validTypes.includes(file.type) ||
         !validExtensions.includes(extension)
       ) {
+        if (!errorDiv) {
+          throw new Error("L'élément du méssage d'erreur n'existe pas");
+        }
         errorDiv.textContent =
           "Format de fichier non valide (seuls JPG/PNG sont autorisés)";
-        e.target.value = "";
+        target.value = "";
         formDataCache.imageFile = null;
         return;
       }
 
       if (file.size > 4 * 1024 * 1024) {
+        if (!errorDiv) {
+          throw new Error("L'élément du méssage d'erreur n'existe pas");
+        }
         errorDiv.textContent = "Le fichier dépasse 4 Mo";
-        e.target.value = "";
+        if (!e.target) {
+          throw new Error("");
+        }
+        target.value = "";
         formDataCache.imageFile = null;
         return;
       }
@@ -231,8 +275,9 @@ const setupPreview = () => {
 };
 
 const submitProject = () => {
-  const btnValidate = document.getElementById("submit-img");
-  btnValidate?.addEventListener("click", async (e) => {
+  const form = document.querySelector("form");
+  const errorDiv = document.getElementById("file-error");
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -249,9 +294,6 @@ const submitProject = () => {
         },
         body: formData,
       });
-
-      const data = await res.json();
-
       if (res.ok) {
         const gallery = document.querySelector(".gallery");
         if (gallery) {
@@ -274,8 +316,16 @@ const submitProject = () => {
           await updateGallery(galleryModale, false);
           deleteIcons();
         }
+        if (!errorDiv) {
+          throw new Error("L'élément du méssage d'erreur n'existe pas");
+        }
+        errorDiv.textContent = "";
       } else {
-        throw new Error("Erreur lors de l'envoi");
+        if (!errorDiv) {
+          throw new Error("L'élément du méssage d'erreur n'existe pas");
+        }
+        errorDiv.textContent =
+          "Veuillez renseigner un titre ainsi qu'une catégorie";
       }
     } catch (error) {
       console.error("Erreur:", error);
