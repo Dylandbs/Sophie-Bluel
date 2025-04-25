@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getCookie } from "./auth.js";
 import { recupArray, updateGallery, deleteIcons } from "./gallery.js";
 

@@ -37,11 +37,9 @@ const updateGallery = async (targetGallery, shouldAddTitle) => {
 
       fragment.appendChild(figure);
     });
-
-    if (getCookie("token")) {
       targetGallery.innerHTML = '';
       targetGallery.appendChild(fragment);
-    }
+      
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
   }
